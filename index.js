@@ -18,9 +18,16 @@ const client = new MongoClient(uri, {
 client.connect((err) => {
   const collection = client.db("9t6db").collection("hagus");
   console.log("database successfully connected");
+  const data = {
+    name: "hagu",
+    color: "yellow",
+    price: 100,
+  };
+  collection.insertOne(data)
+  .then(res => {console.log("inserted one data")})
 
   // perform actions on the collection object
-  client.close();
+  
 });
 
 app.listen(3000, () => "this is running on port 3000");
