@@ -25,7 +25,7 @@
           <label for="exampleInputAge">Age</label>
           <input
             required
-            type="text"
+            type="number"
             class="form-control"
             name="age"
             aria-describedby="ageHelp"
@@ -62,13 +62,15 @@
     <div id="update" class="text-center m-4"></div>
 
     <script>
-      function deleteProduct(id) {
+      function deleteProduct(event, id) {
         fetch(`/delete/${id}`, {
           method: "DELETE",
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("deleted successfully");
+            if (data) {
+              event.target.parentNode.style.display = "none";
+            }
           });
       }
       function getProduct(id) {
@@ -87,6 +89,7 @@
                     type="email"
                     class="form-control"
                     name="email"
+                    id="email"
                     aria-describedby="emailHelp"
                     placeholder="Enter email"
                     value="${data.email}"
@@ -94,9 +97,10 @@
                   <label for="exampleInputAge">Age</label>
                   <input
                     required
-                    type="text"
+                    type="number"
                     class="form-control"
                     name="age"
+                    id="age"
                     aria-describedby="ageHelp"
                     placeholder="Age..."
                     value="${data.age}"
@@ -112,12 +116,13 @@
                     type="password"
                     class="form-control"
                     name="password"
+                    id="password"
                     placeholder="Password"
                     value="${data.password}"
                   />
                 </div>
-               
-                <button type="submit" class="btn btn-warning mt-3">Update</button>
+
+                <button  onclick="updateUser('${data._id}')" class="btn btn-warning mt-3">Update</button>
               </form>
               `;
           });
@@ -130,10 +135,26 @@
               let item = document.getElementById("users");
               let p = document.createElement("p");
               p.innerHTML = `${pd.email} --- Age: ${pd.age} Password: ${pd.password}
-              <button onclick="deleteProduct('${pd._id}')" type="button" class="btn btn-danger">Delete</button>
+              <button onclick="deleteProduct(event,'${pd._id}')" type="button" class="btn btn-danger">Delete</button>
             <button onclick="getProduct('${pd._id}')" type="button" class="btn btn-warning">Update</button>`;
               item.appendChild(p);
             });
+          });
+      }
+      function updateUser(id) {
+        console.log("updating");
+        let age = document.getElementById("age").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let user = { id, email, age, password };
+        fetch(`update/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("updated successfully");
           });
       }
 
