@@ -10,11 +10,12 @@
     />
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="newUser">
       <form action="/addUser" method="POST" class="shadow p-5">
         <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
           <input
+            required
             type="email"
             class="form-control"
             name="email"
@@ -23,6 +24,7 @@
           />
           <label for="exampleInputAge">Age</label>
           <input
+            required
             type="text"
             class="form-control"
             name="age"
@@ -36,6 +38,7 @@
         <div class="form-group">
           <label for="exampleInputPassword1">Password</label>
           <input
+            required
             type="password"
             class="form-control"
             name="password"
@@ -56,15 +59,67 @@
       </form>
     </div>
     <div id="users" class="text-center m-4"></div>
+    <div id="update" class="text-center m-4"></div>
 
     <script>
       function deleteProduct(id) {
-        fetch(`/delete/:${id}`, {
+        fetch(`/delete/${id}`, {
           method: "DELETE",
         })
           .then((res) => res.json())
           .then((data) => {
             console.log("deleted successfully");
+          });
+      }
+      function getProduct(id) {
+        fetch(`product/${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            let item = document.getElementById("newUser");
+            item.style.display = "none";
+            let updateProduct = document.getElementById("update");
+            updateProduct.innerHTML = `
+              <form  class="shadow p-5">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Email address</label>
+                  <input
+                    required
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    aria-describedby="emailHelp"
+                    placeholder="Enter email"
+                    value="${data.email}"
+                  />
+                  <label for="exampleInputAge">Age</label>
+                  <input
+                    required
+                    type="text"
+                    class="form-control"
+                    name="age"
+                    aria-describedby="ageHelp"
+                    placeholder="Age..."
+                    value="${data.age}"
+                  />
+                  <small name="emailHelp" class="form-text text-muted"
+                    >We'll never share your email with anyone else.</small
+                  >
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Password</label>
+                  <input
+                    required
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    placeholder="Password"
+                    value="${data.password}"
+                  />
+                </div>
+               
+                <button type="submit" class="btn btn-warning mt-3">Update</button>
+              </form>
+              `;
           });
       }
       function loadProducts() {
@@ -76,7 +131,7 @@
               let p = document.createElement("p");
               p.innerHTML = `${pd.email} --- Age: ${pd.age} Password: ${pd.password}
               <button onclick="deleteProduct('${pd._id}')" type="button" class="btn btn-danger">Delete</button>
-<button type="button" class="btn btn-warning">Update</button>`;
+            <button onclick="getProduct('${pd._id}')" type="button" class="btn btn-warning">Update</button>`;
               item.appendChild(p);
             });
           });

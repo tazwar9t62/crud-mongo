@@ -29,6 +29,13 @@ client.connect((err) => {
       .deleteOne({ _id: ObjectId(req.params.id) })
       .then((result) => console.log(result));
   });
+  app.get("/product/:id", (req, res) => {
+    collection
+      .find({ _id: ObjectId(req.params.id) })
+      .toArray((err, documents) => {
+        res.send(documents[0]);
+      });
+  });
   app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
   });
